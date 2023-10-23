@@ -1,0 +1,7 @@
+{
+"database_connection": {
+    "database": "REPLACE_WITH_DB_NAME",
+    "password": "REPLACE_WITH_USER",
+    "password": "REPLACE_WITH_PASS"
+}
+}

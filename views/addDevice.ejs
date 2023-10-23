@@ -1,0 +1,82 @@
+<div class="container mt-5">
+    <h1>Onboard a new Device</h1> <br>
+
+    <form action="/settings/onboarding/success">
+
+        <label> Wie soll das neue IoT Device heißen? </label> <br>
+
+        <input id="deviceName" value="Neues IoTech Device"> </input>
+        <button class="btn btn-light" type="button" id="checkButton" onclick="proofText()">Verfügbarkeit Prüfen</button>
+        <br>
+
+        <br><br>
+
+
+        <label> Welche Sensoren hat das neue Device? </label> <br>
+
+        <input type="checkbox" class="form-check-input" id="temp">
+        <label for="includeUppercase">Temperatur</label> <br>
+
+        <input type="checkbox" class="form-check-input" id="humid">
+        <label for="includeNumbers">Lustfeuchtigkeit</label> <br>
+
+        <input type="checkbox" class="form-check-input" id="pressure">
+        <label for="includeSymbols">Luftdruck (Beta)</label> <br>
+
+        <input type="checkbox" class="form-check-input" id="gas">
+        <label for="includeSymbols">Gas (Beta)</label> <br>
+
+        <br><br>
+
+        <button type="submit" class="btn btn-success">Onboarding starten</button>
+
+    </form>
+
+</div>
+
+<script>
+
+    const nameValue = document.getElementById('deviceName')
+    const checkButton = document.getElementById('checkButton')
+
+
+    function proofText() {
+
+        deviceName = nameValue.value
+
+        console.log(deviceName)
+
+        fetch('/check-deviceName', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ deviceName: deviceName }),
+        })
+
+            .then(response => response.json())
+            .then(data => {
+
+                let result = data.result;
+
+                console.log(result)
+
+                if (result) {
+
+                    checkButton.textContent = "Noch Frei"
+                    checkButton.className = "btn btn-success"
+
+                } else {
+
+                    checkButton.textContent = "Vergeben"
+                    checkButton.className = "btn btn-danger"
+                }
+
+            })
+    }
+
+
+
+
+
+</script>

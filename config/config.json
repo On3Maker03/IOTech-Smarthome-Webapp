@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "drey",
+    "password": "JYR1XBVc6zNn11bspJOt",
+    "database": "smarthome",
+    "host": "dddrey.info",
+    "dialect": "mysql"
+  },
+  
+  "database_connection": {
+    "database": "smarthome",
+    "hostname": "drey",
+    "password": "JYR1XBVc6zNn11bspJOt",
+    "port": "3306"
+  }
+}

@@ -1,0 +1,54 @@
+<div class="container">
+    <h1 class="mt-5">Willkommen im Bug Bounty Program</h1>
+    <p class="lead">Wir schätzen Ihre Hilfe bei der Identifizierung von Sicherheitslücken.</p>
+    <hr>
+
+    <h2>Vertraulichkeit und Ethik</h2>
+    <p>Ihre Sicherheit und Privatsphäre sind uns wichtig. Unsere Richtlinien und Vereinbarungen sorgen dafür, dass gemeldete Schwachstellen vertraulich behandelt und ethisch verantwortungsvoll behoben werden.</p>
+
+    <h2>Wie wir Ihre Hilfe nutzen</h2>
+    <p>Die von Ihnen gemeldeten Schwachstellen werden von unserem Sicherheitsteam gründlich geprüft und umgehend behoben. Ihr Engagement trägt dazu bei, die Sicherheit unserer Plattform kontinuierlich zu verbessern.</p>
+
+    <h2>Belohnungen</h2>
+    <p>Je nach Schweregrad des gemeldeten Fehlers bieten wir angemessene Belohnungen an.</p>
+
+    <h2>So melden Sie einen Fehler</h2>
+    <p>Verwenden Sie das Formular unten, um uns über den gefundenen Bug zu informieren.</p>
+    
+    <!-- Bug-Meldungsformular -->
+    <form>
+        <div class="form-group">
+            <label for="bugDescription">Beschreibung des Fehlers:</label>
+            <textarea class="form-control" id="bugDescription" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="email">Ihre E-Mail-Adresse:</label>
+            <input type="email" class="form-control" id="email" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Fehler melden</button>
+    </form>
+</div>
+
+<script>
+const db = require('../models/smarthomeConnect');
+
+bugForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  // Die eingegebenen Daten aus dem Formular abrufen
+  const email = document.querySelector("#email").value;
+  const bugDescription = document.querySelector("#bugDescription").value;
+
+  // Daten in die Datenbank einfügen
+  db.BugBounty.create({
+    email: email,
+    bugReport: bugDescription
+  })
+  .then((bugReport) => {
+    console.log("Bug Report wurde erfolgreich in die Datenbank eingefügt:", bugReport);
+  })
+  .catch((error) => {
+    console.error("Fehler beim Einfügen des Bug Reports in die Datenbank:", error);
+  });
+});
+</script>

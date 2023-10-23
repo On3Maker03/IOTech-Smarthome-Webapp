@@ -1,0 +1,304 @@
+<div class="container mt-5">
+  <h1 class="text-center">Smart Home Devices</h1>
+  <!-- Device Form -->
+  <form id="deviceForm" class="mb-3">
+      <div class="form-group">
+          <label for="deviceSelect">Bitte wähle ein Gerät:</label>
+          <select class="form-control" id="deviceSelect" name="deviceSelect">
+              <option value="">Wähle ein Gerät aus!</option>
+              <% devices.forEach(device => { %>
+                  <option value="<%= device.id %>"><%= device.deviceName %></option>
+              <% }); %>
+          </select>
+      </div>
+  </form>
+
+  <!-- Zeitraum Selector -->
+  <div class="mb-3">
+      <label for="zeitraum">Zeitraum auswählen:</label>
+      <select class="form-control" id="zeitraum">
+          <option value="1">Letzte Minute</option>
+          <option value="10">Letzte 10 Minuten</option>
+          <option value="30">Letzte halbe Stunde</option>
+          <option value="60">Letzte Stunde</option>
+          <option value="300">Letzte 5 Stunden</option>
+          <option value="720">Letzten 12 Stunden</option>
+          <option value="1440" selected>1 Tag</option>
+          <option value="10080">1 Woche</option>
+          <option value="all">Gesamt</option>
+      </select>
+  </div>
+
+  <!-- Temperature and Humidity Displays -->
+  <div id="currentDataWidget" class="mb-4">
+      <div class="row">
+          <div class="col-md-6">
+              <div class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">Temperature</h5>
+                      <div id="temperatureDisplay"></div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">Humidity</h5>
+                      <div id="humidityDisplay"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row">
+      <div class="col-md-6">
+          <div class="chart-container">
+              <canvas id="temperatureChart" width="400" height="200"></canvas>
+          </div>
+      </div>
+      <div class="col-md-6">
+          <div class="chart-container">
+              <canvas id="humidityChart" width="400" height="200"></canvas>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js" type="module"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const deviceSelect = document.getElementById('deviceSelect');
+    const zeitSelect = document.getElementById('zeitraum');
+    const temperatureDisplay = document.getElementById('temperatureDisplay');
+    const humidityDisplay = document.getElementById('humidityDisplay');
+    let timeStepSize = 0;
+    let timeUnit = 0;
+
+    temperatureDisplay.style.display = 'none';
+    humidityDisplay.style.display = 'none';
+
+    //use websocket for real-time data
+    const socket = new WebSocket('wss:dddrey.info:1234');
+
+    socket.onopen = () => {
+      console.log('WebSocket connection opened');
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      temperatureDisplay.innerHTML = `Neueste Temperatur: ${data.temperature} °C`;
+      humidityDisplay.innerHTML = `Neueste Luftfeuchtigkeit: ${data.humidity}%`;
+
+      updateWidgetAndCharts()
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    deviceSelect.addEventListener("change", () => {
+      updateWidgetAndCharts();
+    });
+
+    zeitSelect.addEventListener("change", () => {
+      updateWidgetAndCharts();
+    });
+  });
+
+  let temperatureChart = null;
+  let humidityChart = null;
+
+  //Update chart
+  function updateChart(ctx, data, label, yAxisLabel, attribute, selectedZeitraum) {
+
+    //set time unit
+  function getTimeUnit(selectedZeitraum) {
+  switch (selectedZeitraum) {
+    case '1':
+      timeUnit = 'second';
+      break;
+    case '10':
+      timeUnit = 'minute';
+      break;
+    case '30':
+      timeUnit = 'minute';
+      break;
+    case '60':
+      timeUnit = 'minute';
+      break;
+    case '300':
+      timeUnit = 'hour';
+      break;
+    case '720':
+      timeUnit = 'hour';
+      break;
+    case '1440':
+      timeUnit = 'hour';
+      break;
+    case '10080':
+      timeUnit = 'day';
+      break;
+    case 'all':
+      timeUnit = 'day';
+      break;
+    default:
+      timeUnit = 'day';
+  }
+}
+    //set time step size
+  function getTimeStepSize(timeUnit) {
+  switch (timeUnit) {
+    case 'second':
+      timeStepSize = 15;
+      break;
+    case 'minute':
+      timeStepSize = 2;
+      break;
+    case 'hour':
+      timeStepSize = 1;
+      break;
+    case 'day':
+      timeStepSize = 1;
+      break;
+    case 'week':
+      timeStepSize = 1;
+      break;
+    default:
+      timeStepSize = 1;
+  }
+}
+
+  // Extract timestamps and data from the response
+  const timestamps = data.map((entry) => new Date(entry.createdAt));
+  const values = data.map((entry) => entry[attribute]);
+
+  // Initialize or update the chart
+  if (ctx.chart) {
+    const chart = ctx.chart;
+
+    getTimeUnit(selectedZeitraum);
+    getTimeStepSize(timeUnit);
+
+    // Add new data points
+    chart.data.labels = timestamps;
+    chart.data.datasets[0].data = values;
+
+    let xScale = chart.scales.x;
+    chart.options.scales = {
+      x: {
+            type: 'time',
+            time: {
+              unit: timeUnit,
+              unitStepSize: timeStepSize,
+              displayFormats: {
+                second: 'mm:ss',
+                minute: 'HH:mm',
+                hour: 'HH',
+                day: 'MMM d',
+                week: 'll',
+              },
+            },
+            title: {
+              display: true,
+              text: 'Timestamp',
+            },
+          },
+        }
+    chart.update('none');
+    xScale = chart.scales.x;
+  } else {
+
+    // Create a new chart
+    getTimeUnit(selectedZeitraum);
+    getTimeStepSize(timeUnit);
+
+    ctx.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timestamps,
+        datasets: [
+          {
+            label: label,
+            data: values,
+            borderColor: 'blue',
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        elements: {
+          point: {
+            radius: 0,
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              unit: timeUnit,
+              unitStepSize: timeStepSize,
+              displayFormats: {
+                second: 'ss',
+                minute: 'mm',
+                hour: 'HH:mm',
+                day: 'MMM d',
+                week: 'll',
+              },
+            },
+            title: {
+              display: true,
+              text: 'Timestamp',
+            },
+          },
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: yAxisLabel,
+            },
+          },
+        },
+      },
+    });
+  }
+}
+
+  //
+  function updateWidgetAndCharts() {
+    const temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+    const humidityCtx = document.getElementById('humidityChart').getContext('2d');
+
+    const selectedDeviceId = document.getElementById('deviceSelect').value;
+    const selectedZeitraum = document.getElementById('zeitraum').value;
+
+    fetch(`/temperature?deviceId=${selectedDeviceId}&zeitraum=${selectedZeitraum}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+
+        const temperatureDisplay = document.getElementById('temperatureDisplay');
+        const humidityDisplay = document.getElementById('humidityDisplay');
+
+        // Update the widget with the latest data
+        temperatureDisplay.innerHTML = `Neueste Temperatur: ${data.latestData.temperature} °C`;
+        humidityDisplay.innerHTML = `Neueste Luftfeuchtigkeit: ${data.latestData.humidity}%`;
+        temperatureDisplay.style.display = 'block';
+        humidityDisplay.style.display = 'block';
+
+        updateChart(temperatureCtx, data.temperatureData, 'Temperature', 'Temperature (°C)', 'temperature', selectedZeitraum);
+        updateChart(humidityCtx, data.humidityData, 'Humidity', 'Humidity (%)', 'humidity', selectedZeitraum);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+</script>

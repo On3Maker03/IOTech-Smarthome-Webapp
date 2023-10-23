@@ -1,0 +1,202 @@
+<div class="container">
+    <h1 class="title">Erstellen Sie ein neues Passwort</h1>
+
+    <br>
+
+    <form id="passwordGeneratorForm" class="form">
+        <label for="characterAmountNumber">Anzahl der Zeichen: </label>
+        <div class="character-amount-container">
+            <input type="range" style="width: 250px" class="form-range form-range-track-width-50" min="12" max="50"
+                value="10" id="characterAmountRange">
+            <input class="form-control" style="width: 250px" type="number" min="12" max="50" value="12"
+                id="characterAmountNumber">
+        </div>
+
+        <br>
+
+        <div class="form-check">
+
+            <input type="checkbox" class="form-check-input" id="includeUppercase">
+            <label for="includeUppercase">Mit Großbuchstaben</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="includeNumbers">
+            <label for="includeNumbers">Mit Nummern</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="includeSymbols">
+            <label for="includeSymbols">Mit Symbole</label> <br>
+
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn btn-success">Generiere Passwort</button>
+
+        <br>
+        <br>
+
+    </form>
+
+    <div id="newPasswordDiv" style="display: none;" class="modal-body">
+        <h5 id="passwordDisplay"></h5>
+        <button class="btn btn-light" type="button" id="copyButton" onclick="copyText()">Kopieren</button>
+        <button class="btn btn-light" type="button" id="setButton" onclick="setText()">Festlegen</button>
+        <button class="btn btn-light" type="button" onclick="closeText()">Schließen</button>
+    </div>
+
+    <br>
+    <br>
+
+    <h1 class="title">Neues Gerät anlegen</h1>
+
+    <br>
+
+    <p> Sie haben hier die Möglichkeit ein Neues IoT-Gerätz anzulegen. <br>
+    IoTech empfiehlt die Nutzung von eigenen Endgeräten. <br>
+    Sollten sie ein anderes IoT Gerät verwenden, dann ist die Funktion nicht gewährleistet. <br>
+    </p> 
+
+    <br>
+
+    <a href="settings/onboarding"><button class="btn btn-warning" type="button" >Onboardingprozess starten</button></a>
+
+
+
+</div>
+
+<script>
+
+    const characterAmountRange = document.getElementById('characterAmountRange')
+    const characterAmountNumber = document.getElementById('characterAmountNumber')
+    const includeUppercaseElement = document.getElementById('includeUppercase')
+    const includeNumbersElement = document.getElementById('includeNumbers')
+    const includeSymbolsElement = document.getElementById('includeSymbols')
+    const form = document.getElementById('passwordGeneratorForm')
+    const passwordDisplay = document.getElementById('passwordDisplay')
+    const newPasswordDiv = document.getElementById('newPasswordDiv')
+    const generate = document.getElementById('generate')
+    const copyButton = document.getElementById('copyButton')
+    const setButton = document.getElementById('setButton')
+
+
+    const UPPERCASE_CHAR_CODES = arrayFromLowToHigh(65, 90)
+    const LOWERCASE_CHAR_CODES = arrayFromLowToHigh(97, 122)
+    const NUMBER_CHAR_CODES = arrayFromLowToHigh(48, 57)
+    const SYMBOL_CHAR_CODES = arrayFromLowToHigh(33, 47).concat(
+        arrayFromLowToHigh(58, 64)
+    ).concat(
+        arrayFromLowToHigh(91, 96)
+    ).concat(
+        arrayFromLowToHigh(123, 126)
+    )
+
+    characterAmountNumber.addEventListener('input', syncCharacterAmount)
+    characterAmountRange.addEventListener('input', syncCharacterAmount)
+
+    form.addEventListener('submit', e => {
+        e.preventDefault()
+        const characterAmount = characterAmountNumber.value
+        const includeUppercase = includeUppercaseElement.checked
+        const includeNumbers = includeNumbersElement.checked
+        const includeSymbols = includeSymbolsElement.checked
+        const password = generatePassword(characterAmount, includeUppercase, includeNumbers, includeSymbols)
+
+        passwordDisplay.innerText = password
+        newPasswordDiv.style.display = 'block'
+        copyButton.className = "btn btn-light"
+        copyButton.textContent = "Kopieren"
+        setButton.textContent = "Festgelegen"
+        setButton.className = "btn btn-light"
+        
+    })
+
+    function generatePassword(characterAmount, includeUppercase, includeNumbers, includeSymbols) {
+        let charCodes = LOWERCASE_CHAR_CODES
+        if (includeUppercase) charCodes = charCodes.concat(UPPERCASE_CHAR_CODES)
+        if (includeSymbols) charCodes = charCodes.concat(SYMBOL_CHAR_CODES)
+        if (includeNumbers) charCodes = charCodes.concat(NUMBER_CHAR_CODES)
+
+        const passwordCharacters = []
+        for (let i = 0; i < characterAmount; i++) {
+            const characterCode = charCodes[Math.floor(Math.random() * charCodes.length)]
+            passwordCharacters.push(String.fromCharCode(characterCode))
+        }
+        return passwordCharacters.join('')
+    }
+
+    function arrayFromLowToHigh(low, high) {
+        const array = []
+        for (let i = low; i <= high; i++) {
+            array.push(i)
+        }
+        return array
+    }
+
+    function syncCharacterAmount(e) {
+        const value = e.target.value
+        characterAmountNumber.value = value
+        characterAmountRange.value = value
+    }
+
+    function copyText() {
+
+        var copyText = document.getElementById('passwordDisplay')
+
+        if (copyText) {
+            var textToCopy = copyText.innerText || copyText.textContent;
+
+            if (textToCopy) {
+                navigator.clipboard.writeText(textToCopy);
+                copyButton.className = "btn btn-success"
+                copyButton.textContent = "Kopiert"
+            } else {
+                copyButton.className = "btn btn-danger"
+                copyButton.textContent = "Fehler"
+            }
+        }
+    }
+
+    function closeText() {
+
+        newPasswordDiv.style.display = 'none'
+        copyButton.className = "btn btn-light"
+        copyButton.textContent = "Kopieren"
+        setButton.textContent = "Festgelegen"
+        setButton.className = "btn btn-light"
+
+    }
+
+    function setText() {
+
+
+        const setButton = document.getElementById('setButton')
+        const copyText = document.getElementById('passwordDisplay')
+
+        let password = copyText.innerText || copyText.textContent;
+
+        fetch('/hash-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ password: password }),
+        })
+
+            .then(response => response.json())
+            .then(data => {
+                const hash = data.hash;
+
+                fetch('/update-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: "User584397912", hash: hash }),
+                })
+            })
+
+
+        setButton.textContent = "Festgelegt"
+        setButton.className = "btn btn-success"
+    }
+
+</script>

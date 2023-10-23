@@ -1,0 +1,59 @@
+<div class="container mt-5">
+    <h1>Ihr neues Device wird eingereichtet!</h1> <br>
+
+     
+
+    <p> Ihr neues Device hat einen Port bekommen. <br>
+        Dieses wird beim einrichten mit dem Shell Script benötigt! <br>
+        Klicken sie auf Port um den Port zu erhalten. <br>
+        Unter Download können Sie das Shellscript herunterladen. <br>
+        Bei einer Automatischen Erinrichtung können die einfach zu Home zurückkehren. <br>
+    </p> 
+
+    <br><br>
+
+    <button class="btn btn-info" type="button" id="portButton" onclick="showPort()">Port Anzeigen</button>
+    
+    <br><br>
+
+    <form method="get" action="/get-onboarding/download">
+        <button class="btn btn-info" type="submite" id="scriptButton">Shell Script Herunterladen (.sh)</button>
+    </form>
+
+</div>
+
+<script>
+
+
+
+    const portButton = document.getElementById('portButton')
+    const scriptButton = document.getElementById('checkButton')
+
+    let randport = 1024
+    
+    fetch('/onboarding/get-port', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(),
+        })
+
+            .then(response => response.json())
+            .then(data => {
+                randport = data.port;
+
+    })
+
+
+    function showPort() {
+
+        alert('Der Port des neuen Device lautet: ' + randport);
+    }
+
+
+
+
+
+
+</script>

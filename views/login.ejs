@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
+    <!-- Chart.js library -->
+    <script src="../../node_modules/chart.js/dist/chart.umd.js"></script>
+    <link rel="icon" type="image/ico" href="/public/pictures/logo.ico">
+    <title>IoTech</title>
+</head>
+
+<body>
+    <div class="container">
+            <a href="/" class="col-md-4 d-flex align-items-center justify-content-left mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <img src="/public/pictures/logo.png" width="40" height="53" class="bi me-2" />
+                <span class="fs-4">IoTech</span>
+            </a>
+    </div>
+    <br>
+
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-sm-12">
+                <h1 class="text-center">Login</h1>
+                <form action="/login" method="post" id="loginForm"><br>
+                    <div class="form-group">
+                        <label for="username">Benutzername:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Passwort:</label>
+                        <input type="password" class="form-control" id="password" name="password" required><br>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" class="btn btn-primary" value="Anmelden">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        const form = document.getElementById('loginForm');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const usernameInput = form.username;
+            const passwordInput = form.password;
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            // Send data to the server
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+            window.location.href = '/';
+        });
+    </script>
+    <br>
+    <div class="container" >
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <p class="col-md-4 mb-0 text-body-secondary">&copy; IoTech</p>
+
+            <a href="/"
+                class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <img src="/public/pictures/logo.png" alt="Logo" width="40" height="53" class="bi me-2" />
+            </a>
+
+            <ul class="nav col-md-4 justify-content-end">
+                <li class="nav-item"><a href="/datenschutz"
+                        class="nav-link px-2 text-body-secondary">Datenschutzerklärung</a></li>
+                <li class="nav-item"><a href="/Impressum" class="nav-link px-2 text-body-secondary">Impressum</a></li>
+                <li class="nav-item"><a href="/bugBounty" class="nav-link px-2 text-body-secondary">Bug Bounty</a></li>
+            </ul>
+        </footer>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>

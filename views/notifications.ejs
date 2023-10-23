@@ -1,0 +1,39 @@
+<div class="container mt-5">
+
+<form id="deviceForm" class="mb-3">
+    <div class="form-group">
+        <label for="deviceSelect">Bitte wähle ein Gerät:</label>
+        <select class="form-control" id="deviceSelect" name="deviceSelect">
+            <option value="">Wähle ein Gerät aus!</option>
+            <% devices.forEach(device => { %>
+                <option value="<%= device.id %>"><%= device.deviceName %></option>
+            <% }); %>
+        </select>
+    </div>
+</form>
+
+
+    <form id="myForm">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Input-Feld 1 -->
+                <div class="mb-3">
+                    <label for="inputField1" class="form-label">Bitte neue Email eintragen</label>
+                    <input type="text" class="form-control" id="inputField1" placeholder="Email">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Input-Feld 2 -->
+                <div class="mb-3">
+                    <label for="inputField2" class="form-label">gewünschter Schwellenwert</label>
+                    <input type="text" class="form-control" id="inputField2" placeholder="Schwellenwert">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+
+</script>

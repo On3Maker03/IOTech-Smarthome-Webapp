@@ -1,18 +1,18 @@
 ﻿# IOTech-Smarthome-Webapp
 
-Welcome to MyWebApp! This web application is designed to display a dynamic dashboard using Node.js with Express.js for the server-side, Chart.js for creating interactive charts, and WebSockets for real-time data updates. This readme will provide you with the necessary information to get started with the application, understand its features, and make any required configurations.
+Welcome to our Dashboard Application! This web application is designed to display a dynamic dashboard using Node.js with Express.js for the server-side, Chart.js for creating interactive charts, and WebSockets for real-time data updates. This readme will provide you with the necessary information to get started with the application, understand its features, and make any required configurations.
 
 ---------------------------------------------------------------------------------------------------------------------------------
 Before you start, make sure you have the following prerequisites installed on your system:
 
-Node.js - MyWebApp is built on Node.js, so you will need to have Node.js installed.
+Node.js - the App is built on Node.js, so you will need to have Node.js installed.
 npm - Node Package Manager comes with Node.js. Ensure you have the latest version.
 A modern web browser - We recommend using the latest versions of Chrome, Firefox, or Edge for the best experience.
 
 ---------------------------------------------------------------------------------------------------------------------------------
 Installation
 
-Follow these steps to get MyWebApp up and running:
+Follow these steps to get our App up and running:
 
 Clone the repository to your local machine using Git:
 
@@ -47,7 +47,7 @@ This will start the server, and you can access the application in your web brows
 ---------------------------------------------------------------------------------------------------------------------------------
 Features
 
-MyWebApp provides the following features:
+the App provides the following features:
 
 Dashboard: A visually appealing dashboard that displays real-time data using interactive charts.
 
@@ -59,7 +59,7 @@ Interactive Charts: Charts created with Chart.js that allow users to interact wi
 ---------------------------------------------------------------------------------------------------------------------------------
 Contributing
 
-We welcome contributions from the community. If you'd like to improve MyWebApp, please follow these guidelines:
+We welcome contributions from the community. If you'd like to improve our Webapp, please follow these guidelines:
 
 Fork the repository to your GitHub account.
 Create a new branch for your feature or bug fix.
